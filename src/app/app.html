@@ -13,5 +13,11 @@
 </header>
 
 <main class="consulta">
-  <app-filtros-lotes />
+  <app-filtros-lotes (pesquisaSolicitada)="pesquisar($event)" />
+
+  @if (carregando()) {
+    <p role="status">Pesquisando lotes…</p>
+  } @else if (resultado(); as lotes) {
+    <app-tabela-lotes [lotes]="lotes" />
+  }
 </main>

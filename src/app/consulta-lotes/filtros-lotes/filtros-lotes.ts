@@ -1,11 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
+import { FiltrosPesquisaLotes, SITUACOES_LOTE, SituacaoLote } from '../lote.model';
 import { intervaloOrdenado } from './intervalo-ordenado.validator';
-
-const SITUACOES_LOTE = ['Aberto', 'Enviado', 'Confirmado'] as const;
-
-type SituacaoLote = (typeof SITUACOES_LOTE)[number];
 
 @Component({
   selector: 'app-filtros-lotes',
@@ -14,6 +11,8 @@ type SituacaoLote = (typeof SITUACOES_LOTE)[number];
   styleUrl: './filtros-lotes.css',
 })
 export class FiltrosLotes {
+  readonly pesquisaSolicitada = output<FiltrosPesquisaLotes>();
+
   protected readonly expandido = signal(true);
   protected readonly situacoes = SITUACOES_LOTE;
 
@@ -49,5 +48,14 @@ export class FiltrosLotes {
 
   protected alternarPainel(): void {
     this.expandido.update(aberto => !aberto);
+  }
+
+  protected pesquisar(): void {
+    if (this.formulario.invalid) {
+      this.formulario.markAllAsTouched();
+      return;
+    }
+
+    this.pesquisaSolicitada.emit(this.formulario.getRawValue());
   }
 }

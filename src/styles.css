@@ -12,3 +12,37 @@
 body {
   margin: 0;
 }
+
+.acoes-formulario {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 16px;
+}
+
+.botao-primario {
+  min-height: 38px;
+  padding: 8px 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: var(--cor-destaque);
+  color: white;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botao-primario:hover:enabled {
+  background: #005f59;
+}
+
+.botao-primario:focus-visible {
+  outline: 2px solid var(--cor-petroleo);
+  outline-offset: 2px;
+}
+
+.botao-primario:disabled {
+  background: #dce6e5;
+  color: #496361;
+  cursor: default;
+}

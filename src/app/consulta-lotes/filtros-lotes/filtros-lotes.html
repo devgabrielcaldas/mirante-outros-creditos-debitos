@@ -13,96 +13,88 @@
   </h2>
 
   <div id="campos-filtros" [hidden]="!expandido()">
-    <form [formGroup]="formulario" class="campos">
-      <div class="coluna">
-        <label class="campo">
-          Instituição Resp.
-          <input type="text" formControlName="instituicaoResponsavel" />
-        </label>
+    <form [formGroup]="formulario" (ngSubmit)="pesquisar()">
+      <div class="campos">
+        <div class="coluna">
+          <label class="campo">
+            Instituição Resp.
+            <input type="text" formControlName="instituicaoResponsavel" />
+          </label>
 
-        <label class="campo">
-          Instituição
-          <input type="text" formControlName="instituicao" />
-        </label>
+          <label class="campo">
+            Instituição
+            <input type="text" formControlName="instituicao" />
+          </label>
 
-        <label class="campo">
-          Situação Lote
-          <select formControlName="situacao">
-            <option value="">Todas</option>
+          <label class="campo">
+            Situação Lote
+            <select formControlName="situacao">
+              <option value="">Todas</option>
+              @for (situacao of situacoes; track situacao) {
+                <option [value]="situacao">{{ situacao }}</option>
+              }
+            </select>
+          </label>
+        </div>
 
-            @for (situacao of situacoes; track situacao) {
-              <option [value]="situacao">{{ situacao }}</option>
+        <div class="coluna">
+          <fieldset formGroupName="idLote">
+            <legend>ID Lote</legend>
+            <div class="limites">
+              <label class="campo">
+                De
+                <input type="number" formControlName="de" />
+              </label>
+              <label class="campo">
+                Até
+                <input type="number" formControlName="ate" />
+              </label>
+            </div>
+            @if (formulario.controls.idLote.hasError('intervaloInvertido')) {
+              <p class="erro" role="alert">O ID inicial deve ser menor ou igual ao ID final.</p>
             }
-          </select>
-        </label>
+          </fieldset>
+
+          <fieldset formGroupName="valorLote">
+            <legend>Valor Lote</legend>
+            <div class="limites">
+              <label class="campo">
+                De
+                <input type="number" step="0.01" formControlName="de" />
+              </label>
+              <label class="campo">
+                Até
+                <input type="number" step="0.01" formControlName="ate" />
+              </label>
+            </div>
+            @if (formulario.controls.valorLote.hasError('intervaloInvertido')) {
+              <p class="erro" role="alert">O valor inicial deve ser menor ou igual ao valor final.</p>
+            }
+          </fieldset>
+
+          <fieldset formGroupName="dataEntrada">
+            <legend>Data Entrada</legend>
+            <div class="limites">
+              <label class="campo">
+                De
+                <input type="date" formControlName="de" />
+              </label>
+              <label class="campo">
+                Até
+                <input type="date" formControlName="ate" />
+              </label>
+            </div>
+            @if (formulario.controls.dataEntrada.hasError('intervaloInvertido')) {
+              <p class="erro" role="alert">A data inicial deve ser anterior ou igual à data final.</p>
+            }
+          </fieldset>
+        </div>
       </div>
 
-      <div class="coluna">
-        <fieldset formGroupName="idLote">
-          <legend>ID Lote</legend>
-
-          <div class="limites">
-            <label class="campo">
-              De
-              <input type="number" formControlName="de" />
-            </label>
-
-            <label class="campo">
-              Até
-              <input type="number" formControlName="ate" />
-            </label>
-          </div>
-
-          @if (formulario.controls.idLote.hasError('intervaloInvertido')) {
-            <p class="erro" role="alert">
-              O ID inicial deve ser menor ou igual ao ID final.
-            </p>
-          }
-        </fieldset>
-
-        <fieldset formGroupName="valorLote">
-          <legend>Valor Lote</legend>
-
-          <div class="limites">
-            <label class="campo">
-              De
-              <input type="number" step="0.01" formControlName="de" />
-            </label>
-
-            <label class="campo">
-              Até
-              <input type="number" step="0.01" formControlName="ate" />
-            </label>
-          </div>
-
-          @if (formulario.controls.valorLote.hasError('intervaloInvertido')) {
-            <p class="erro" role="alert">
-              O valor inicial deve ser menor ou igual ao valor final.
-            </p>
-          }
-        </fieldset>
-
-        <fieldset formGroupName="dataEntrada">
-          <legend>Data Entrada</legend>
-
-          <div class="limites">
-            <label class="campo">
-              De
-              <input type="date" formControlName="de" />
-            </label>
-
-            <label class="campo">
-              Até
-              <input type="date" formControlName="ate" />
-            </label>
-          </div>
-
-          @if (formulario.controls.dataEntrada.hasError('intervaloInvertido')) {
-            <p class="erro" role="alert">
-              A data inicial deve ser anterior ou igual à data final.
-            </p>
-          }
-        </fieldset>
+      <div class="acoes-formulario">
+        <button class="botao-primario" type="submit" [disabled]="formulario.invalid">
+          Pesquisar
+        </button>
       </div>
     </form>
   </div>
