@@ -1,0 +1,56 @@
+:host {
+  display: block;
+}
+
+.painel {
+  background: white;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.alternador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--cor-petroleo);
+  font: inherit;
+  cursor: pointer;
+}
+
+.campos {
+  display: grid;
+  gap: 6px;
+  padding: 4px 16px 16px;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+select {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 28rem;
+  padding: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  background: white;
+  color: var(--cor-petroleo);
+  font: inherit;
+}
+
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
+}

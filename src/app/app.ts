@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { FiltrosLotes } from './consulta-lotes/filtros-lotes/filtros-lotes';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [FiltrosLotes],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

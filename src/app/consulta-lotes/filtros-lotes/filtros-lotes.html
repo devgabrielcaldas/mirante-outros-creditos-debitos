@@ -1,0 +1,26 @@
+<section class="painel" aria-labelledby="titulo-filtros">
+  <h2 id="titulo-filtros">
+    <button
+      type="button"
+      class="alternador"
+      aria-controls="campos-filtros"
+      [attr.aria-expanded]="expandido()"
+      (click)="alternarPainel()"
+    >
+      Filtros
+      <span aria-hidden="true">{{ expandido() ? '▴' : '▾' }}</span>
+    </button>
+  </h2>
+
+  <div id="campos-filtros" [hidden]="!expandido()">
+    <form [formGroup]="formulario" class="campos">
+      <label for="situacao-lote">Situação Lote</label>
+      <select id="situacao-lote" formControlName="situacao">
+        <option value="">Todas</option>
+        @for (situacao of situacoes; track situacao) {
+          <option [value]="situacao">{{ situacao }}</option>
+        }
+      </select>
+    </form>
+  </div>
+</section>

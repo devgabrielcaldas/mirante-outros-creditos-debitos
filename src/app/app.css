@@ -25,3 +25,7 @@
   margin-right: 4px;
   color: var(--cor-destaque);
 }
+
+.consulta {
+  padding: 20px 24px;
+}
