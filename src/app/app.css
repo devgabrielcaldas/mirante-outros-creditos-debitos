@@ -1,0 +1,27 @@
+.cabecalho {
+  padding: 14px 24px;
+  background-color: white;
+  border-top: 3px solid var(--cor-petroleo);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.cabecalho h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.breadcrumb span {
+  margin-right: 4px;
+  color: var(--cor-destaque);
+}

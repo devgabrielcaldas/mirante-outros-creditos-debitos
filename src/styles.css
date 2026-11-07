@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --cor-petroleo: #073b40;
+  --cor-destaque: #007b73;
+  --cor-fundo: #f4f6f7;
+  --cor-borda: #d5dfe0;
+
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--cor-petroleo);
+  background-color: var(--cor-fundo);
+}
+
+body {
+  margin: 0;
+}

@@ -18,8 +18,8 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Hello, mirante-outros-creditos-debitos',
+    expect(compiled.querySelector('h1')?.textContent?.trim()).toBe(
+      'Outros Créditos/Débitos'
     );
   });
 });
