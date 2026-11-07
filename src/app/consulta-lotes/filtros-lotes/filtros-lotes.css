@@ -28,29 +28,80 @@ h2 {
 
 .campos {
   display: grid;
-  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
   padding: 4px 16px 16px;
 }
 
-label {
+.coluna,
+.campo {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+}
+
+.coluna {
+  gap: 14px;
+}
+
+.campo {
+  gap: 4px;
+}
+
+.campo,
+legend {
   font-size: 0.875rem;
   font-weight: 600;
 }
 
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: 4px;
+  padding: 0;
+}
+
+.limites {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+input,
 select {
   box-sizing: border-box;
   width: 100%;
-  max-width: 28rem;
+  min-width: 0;
   padding: 8px;
   border: 1px solid var(--cor-borda);
   border-radius: 4px;
   background: white;
   color: var(--cor-petroleo);
   font: inherit;
+  font-weight: 400;
 }
 
 button:focus-visible,
+input:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--cor-destaque);
   outline-offset: 2px;
+}
+
+.erro {
+  margin: 6px 0 0;
+  color: #9b2727;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 700px) {
+  .campos {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }
