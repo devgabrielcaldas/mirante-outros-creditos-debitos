@@ -1,35 +1,97 @@
-<div class="rolagem" role="region" aria-label="Resultados da consulta de lotes" tabindex="0">
-  <table aria-label="Lotes encontrados">
-    <thead>
-      <tr>
-        <th scope="col">ID Lote</th>
-        <th scope="col">Data Entrada</th>
-        <th scope="col" class="numero">Valor</th>
-        <th scope="col" class="numero">Quant. Lançamentos</th>
-        <th scope="col">Usuário Registro</th>
-        <th scope="col">Usuário Aprovação</th>
-        <th scope="col">Situação Lote</th>
-        <th scope="col">Data/Hora Situação Lote</th>
-      </tr>
-    </thead>
+<div class="painel-resultados">
+  <div class="rolagem" role="region" aria-label="Resultados da consulta de lotes" tabindex="0">
+    <table aria-label="Lotes encontrados">
+      <thead>
+        <tr>
+          <th scope="col" class="coluna-selecao">
+            <input
+              type="checkbox"
+              aria-label="Selecionar todos os lotes desta página"
+              [checked]="todosSelecionados()"
+              [indeterminate]="selecaoParcial()"
+              [disabled]="lotesDaPagina().length === 0"
+              (change)="alternarPaginaInteira()"
+            />
+          </th>
+          <th scope="col">ID Lote</th>
+          <th scope="col">Data Entrada</th>
+          <th scope="col" class="numero">Valor</th>
+          <th scope="col" class="numero">Quant. Lançamentos</th>
+          <th scope="col">Usuário Registro</th>
+          <th scope="col">Usuário Aprovação</th>
+          <th scope="col">Situação Lote</th>
+          <th scope="col">Data/Hora Situação Lote</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      @for (lote of lotes(); track lote.id) {
-        <tr>
-          <td>{{ lote.id }}</td>
-          <td>{{ lote.dataEntrada | date:'dd/MM/yyyy' }}</td>
-          <td class="numero">{{ lote.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          <td class="numero">{{ lote.quantidadeLancamentos }}</td>
-          <td>{{ lote.usuarioRegistro }}</td>
-          <td>{{ lote.usuarioAprovacao ?? '—' }}</td>
-          <td>{{ lote.situacao }}</td>
-          <td>{{ lote.dataHoraSituacao | date:'dd/MM/yyyy, HH:mm:ss' }}</td>
-        </tr>
-      } @empty {
-        <tr>
-          <td class="vazio" colspan="8">Nenhum lote encontrado para os filtros informados.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+      <tbody>
+        @for (lote of lotesDaPagina(); track lote.id) {
+          <tr [class.selecionada]="selecionados().has(lote.id)">
+            <td class="coluna-selecao">
+              <input
+                type="checkbox"
+                [attr.aria-label]="'Selecionar lote ' + lote.id"
+                [checked]="selecionados().has(lote.id)"
+                (change)="alternarLote(lote.id)"
+              />
+            </td>
+            <td>{{ lote.id }}</td>
+            <td>{{ lote.dataEntrada | date:'dd/MM/yyyy' }}</td>
+            <td class="numero">{{ lote.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+            <td class="numero">{{ lote.quantidadeLancamentos }}</td>
+            <td>{{ lote.usuarioRegistro }}</td>
+            <td>{{ lote.usuarioAprovacao ?? '—' }}</td>
+            <td>{{ lote.situacao }}</td>
+            <td>{{ lote.dataHoraSituacao | date:'dd/MM/yyyy, HH:mm:ss' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="vazio" colspan="9">Nenhum lote encontrado para os filtros informados.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPaginas() > 0) {
+    <footer class="rodape">
+      <span class="resumo" role="status">
+        {{ selecionados().size }} de {{ lotesDaPagina().length }} selecionados nesta página
+      </span>
+
+      <nav class="paginacao" aria-label="Paginação dos lotes">
+        <button
+          type="button"
+          aria-label="Primeira página"
+          [disabled]="pagina() === 1"
+          (click)="irParaPagina(1)"
+        >«</button>
+
+        <button
+          type="button"
+          aria-label="Página anterior"
+          [disabled]="pagina() === 1"
+          (click)="irParaPagina(pagina() - 1)"
+        >‹</button>
+
+        <span class="pagina-atual" aria-current="page">
+          Página {{ pagina() }} de {{ totalPaginas() }}
+        </span>
+
+        <button
+          type="button"
+          aria-label="Próxima página"
+          [disabled]="pagina() === totalPaginas()"
+          (click)="irParaPagina(pagina() + 1)"
+        >›</button>
+
+        <button
+          type="button"
+          aria-label="Última página"
+          [disabled]="pagina() === totalPaginas()"
+          (click)="irParaPagina(totalPaginas())"
+        >»</button>
+      </nav>
+    </footer>
+  }
 </div>

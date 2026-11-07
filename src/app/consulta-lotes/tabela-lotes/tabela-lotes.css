@@ -3,16 +3,20 @@
   margin-top: 16px;
 }
 
-.rolagem {
-  overflow-x: auto;
+.painel-resultados {
+  overflow: hidden;
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   background: white;
 }
 
+.rolagem {
+  overflow-x: auto;
+}
+
 .rolagem:focus-visible {
   outline: 2px solid var(--cor-destaque);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 table {
@@ -43,6 +47,25 @@ tbody tr:nth-child(even) {
   background: #f5f9f8;
 }
 
+tbody tr.selecionada {
+  background: #dcefeb;
+}
+
+.coluna-selecao {
+  width: 38px;
+  padding-inline: 6px;
+  text-align: center;
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  vertical-align: middle;
+  accent-color: var(--cor-destaque);
+  cursor: pointer;
+}
+
 .numero {
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -52,4 +75,64 @@ tbody tr:nth-child(even) {
   padding: 24px 14px;
   text-align: center;
   white-space: normal;
+}
+
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.resumo,
+.pagina-atual {
+  font-size: 0.8125rem;
+}
+
+.resumo {
+  color: #466267;
+}
+
+.paginacao {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagina-atual {
+  padding-inline: 6px;
+  white-space: nowrap;
+}
+
+.paginacao button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  background: white;
+  color: var(--cor-petroleo);
+  font: inherit;
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.paginacao button:hover:enabled {
+  background: #e8f2f0;
+  border-color: var(--cor-destaque);
+}
+
+.paginacao button:disabled {
+  background: #f4f6f7;
+  color: #859595;
+  cursor: default;
+}
+
+.paginacao button:focus-visible,
+input[type='checkbox']:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
 }
