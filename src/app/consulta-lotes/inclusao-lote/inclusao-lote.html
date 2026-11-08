@@ -1,0 +1,179 @@
+@if (lancamentos().length === 0) {
+  <div class="entrada">
+    <button class="botao-primario" type="button" (click)="abrir(dialogo)">
+      Incluir
+    </button>
+  </div>
+} @else {
+  <section class="rascunho" aria-labelledby="titulo-rascunho">
+    <div class="topo-grade">
+      <h2 id="titulo-rascunho">Lançamentos do lote em inclusão</h2>
+
+      <button class="botao-primario" type="button" (click)="abrir(dialogo)">
+        Incluir
+      </button>
+    </div>
+
+    <div class="rolagem">
+      <table aria-label="Lançamentos do lote em inclusão">
+        <thead>
+          <tr>
+            <th scope="col">ID Lançamento</th>
+            <th scope="col">PA</th>
+            <th scope="col">Conta Corrente</th>
+            <th scope="col">Titular</th>
+            <th scope="col">Histórico</th>
+            <th scope="col" class="numero">Valor</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Situação</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of lancamentos(); track item.id) {
+            <tr>
+              <td>{{ item.id }}</td>
+              <td>{{ item.pa }}</td>
+              <td>{{ item.conta.numero }}</td>
+              <td>{{ item.conta.titular }}</td>
+              <td>{{ item.historico }}</td>
+              <td class="numero">
+                {{ item.valorCentavos / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+              <td>{{ item.documento }}</td>
+              <td>{{ item.situacao }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}
+
+<dialog
+  #dialogo
+  aria-labelledby="titulo-modal-lancamento"
+  (close)="aoFechar()"
+>
+  <form [formGroup]="formulario" (ngSubmit)="incluir(dialogo)">
+    <header class="topo-modal">
+      <h2 id="titulo-modal-lancamento">Incluir Lançamento</h2>
+    </header>
+
+    <div class="conteudo-modal">
+      <fieldset>
+        <legend>Conta Corrente</legend>
+
+        <div class="campos">
+          <div class="largura-total">
+            <label for="conta-lancamento">Conta Corrente *</label>
+
+            <div class="busca-conta">
+              <input
+                id="conta-lancamento"
+                type="text"
+                formControlName="conta"
+                autocomplete="off"
+                aria-describedby="retorno-conta"
+                autofocus
+              />
+
+              <button
+                type="button"
+                class="lupa"
+                aria-label="Buscar conta corrente"
+                title="Buscar conta corrente"
+                [disabled]="buscando()"
+                (click)="buscarConta()"
+              >⚲</button>
+
+              @if (contaLocalizada(); as conta) {
+                <strong class="titular">{{ conta.titular }}</strong>
+              }
+            </div>
+
+            <div id="retorno-conta" aria-live="polite">
+              @if (buscando()) {
+                <span>Buscando conta…</span>
+              } @else if (campos.conta.touched && campos.conta.invalid) {
+                <span class="erro">Informe o número da conta com o dígito.</span>
+              } @else if (erroConta()) {
+                <span class="erro">{{ erroConta() }}</span>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label for="valor-lancamento">Valor *</label>
+            <input
+              id="valor-lancamento"
+              type="text"
+              inputmode="decimal"
+              placeholder="0,00"
+              formControlName="valor"
+            />
+
+            @if (campos.valor.touched && campos.valor.invalid) {
+              <p class="erro">Informe um valor maior que zero, como 125,50.</p>
+            }
+          </div>
+
+          <div>
+            <label for="historico-lancamento">Histórico *</label>
+            <select id="historico-lancamento" formControlName="historico">
+              <option value="">Selecione</option>
+              <option value="Lançamento Manual">Lançamento Manual</option>
+            </select>
+
+            @if (campos.historico.touched && campos.historico.invalid) {
+              <p class="erro">Selecione o histórico.</p>
+            }
+          </div>
+
+          <label class="marcacao largura-total">
+            <input type="checkbox" formControlName="estorno" />
+            Estorno
+          </label>
+
+          <div>
+            <label for="documento-lancamento">Documento *</label>
+            <input id="documento-lancamento" type="text" formControlName="documento" />
+
+            @if (campos.documento.touched && campos.documento.invalid) {
+              <p class="erro">Informe o documento.</p>
+            }
+          </div>
+
+          <div>
+            <label for="situacao-lancamento">Situação</label>
+            <input id="situacao-lancamento" type="text" value="Pendente" readonly />
+          </div>
+
+          <div class="largura-total">
+            <label for="descricao-lancamento">Descrição</label>
+            <textarea id="descricao-lancamento" rows="2" formControlName="descricao"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Documento CSC</legend>
+
+        <label for="pa-lancamento">PA *</label>
+        <select id="pa-lancamento" formControlName="pa">
+          <option value="">Selecione</option>
+          <option value="Cooperativa">Cooperativa</option>
+        </select>
+
+        @if (campos.pa.touched && campos.pa.invalid) {
+          <p class="erro">Selecione o PA.</p>
+        }
+      </fieldset>
+    </div>
+
+    <footer class="rodape-modal">
+      <button class="botao-primario" type="submit">Incluir</button>
+      <button class="secundario" type="button" (click)="dialogo.close()">Fechar</button>
+    </footer>
+  </form>
+</dialog>

@@ -4,13 +4,14 @@ import { Subject, switchMap } from 'rxjs';
 
 import { AcoesLote, AlteracaoInstituicao } from './consulta-lotes/acoes-lote/acoes-lote';
 import { FiltrosLotes } from './consulta-lotes/filtros-lotes/filtros-lotes';
+import { InclusaoLote } from './consulta-lotes/inclusao-lote/inclusao-lote';
 import { FiltrosPesquisaLotes, Lote } from './consulta-lotes/lote.model';
 import { LotesService } from './consulta-lotes/lotes.service';
 import { TabelaLotes } from './consulta-lotes/tabela-lotes/tabela-lotes';
 
 @Component({
   selector: 'app-root',
-  imports: [FiltrosLotes, AcoesLote, TabelaLotes],
+  imports: [FiltrosLotes, InclusaoLote, AcoesLote, TabelaLotes],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
