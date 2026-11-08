@@ -1,6 +1,6 @@
 @if (lancamentos().length === 0) {
   <div class="entrada">
-    <button class="botao-primario" type="button" (click)="abrir(dialogo)">
+    <button class="botao-primario" type="button" (click)="abrir(dialogo, 'incluir')">
       Incluir
     </button>
   </div>
@@ -8,16 +8,13 @@
   <section class="rascunho" aria-labelledby="titulo-rascunho">
     <div class="topo-grade">
       <h2 id="titulo-rascunho">Lançamentos do lote em inclusão</h2>
-
-      <button class="secundario" type="button" (click)="abrir(dialogo)">
-        Incluir
-      </button>
     </div>
 
     <div class="rolagem">
       <table aria-label="Lançamentos do lote em inclusão">
         <thead>
           <tr>
+            <th scope="col" aria-label="Seleção"></th>
             <th scope="col">ID Lançamento</th>
             <th scope="col">PA</th>
             <th scope="col">Conta Corrente</th>
@@ -31,7 +28,15 @@
 
         <tbody>
           @for (item of lancamentos(); track item.id) {
-            <tr>
+            <tr [class.linha-selecionada]="idSelecionado() === item.id">
+              <td>
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="'Selecionar lançamento ' + item.id"
+                  [checked]="idSelecionado() === item.id"
+                  (change)="selecionar(item.id)"
+                />
+              </td>
               <td>{{ item.id }}</td>
               <td>{{ item.pa }}</td>
               <td>{{ item.conta.numero }}</td>
@@ -48,30 +53,60 @@
       </table>
     </div>
 
+    <div class="acoes-lancamento" role="group" aria-label="Ações do lançamento">
+      <button class="secundario duplicar" type="button"
+        [disabled]="!selecionado()" (click)="duplicar()">Duplicar</button>
+
+      <button class="secundario" type="button"
+        [disabled]="!selecionado()" (click)="abrir(dialogo, 'visualizar')">Visualizar</button>
+
+      <button class="secundario" type="button"
+        (click)="abrir(dialogo, 'incluir')">Incluir</button>
+
+      <button class="secundario" type="button"
+        [disabled]="!selecionado()" (click)="abrir(dialogo, 'alterar')">Alterar</button>
+
+      <button class="secundario" type="button"
+        [disabled]="!selecionado()" (click)="confirmarExclusao.set(true)">Excluir</button>
+    </div>
+
+    @if (confirmarExclusao()) {
+      <div class="confirmacao" role="group" aria-label="Confirmação de exclusão do lançamento">
+        <span>Excluir o lançamento {{ idSelecionado() }} deste lote?</span>
+        <button class="secundario" type="button"
+          (click)="excluirSelecionado()">Confirmar exclusão</button>
+        <button class="secundario" type="button"
+          (click)="confirmarExclusao.set(false)">Cancelar</button>
+      </div>
+    }
+
     @if (erroLote()) {
       <p class="erro" role="alert">{{ erroLote() }}</p>
     }
 
     <footer class="rodape-modal">
-      <button class="botao-primario" type="button" (click)="salvarLote()">
+      <button class="botao-primario" type="button"
+        [disabled]="confirmarExclusao()" (click)="salvarLote()">
         Salvar lote
       </button>
     </footer>
   </section>
 }
 
-<dialog
-  #dialogo
-  aria-labelledby="titulo-modal-lancamento"
-  (close)="aoFechar()"
->
-  <form [formGroup]="formulario" (ngSubmit)="incluir(dialogo)">
+<dialog #dialogo aria-labelledby="titulo-modal-lancamento" (close)="aoFechar()">
+  <form [formGroup]="formulario" (ngSubmit)="confirmarFormulario(dialogo)">
     <header class="topo-modal">
-      <h2 id="titulo-modal-lancamento">Incluir Lançamento</h2>
+      <h2 id="titulo-modal-lancamento">
+        @switch (modo()) {
+          @case ('incluir') { Incluir Lançamento }
+          @case ('alterar') { Alterar Lançamento {{ idSelecionado() }} }
+          @case ('visualizar') { Visualizar Lançamento {{ idSelecionado() }} }
+        }
+      </h2>
     </header>
 
     <div class="conteudo-modal">
-      <fieldset>
+      <fieldset [disabled]="modo() === 'visualizar'">
         <legend>Conta Corrente</legend>
 
         <div class="campos">
@@ -85,31 +120,25 @@
                 formControlName="conta"
                 autocomplete="off"
                 aria-describedby="retorno-conta"
-                autofocus
               />
 
-              <button
-                type="button"
-                class="lupa"
-                aria-label="Buscar conta corrente"
-                title="Buscar conta corrente"
-                [disabled]="buscando()"
-                (click)="buscarConta()"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
+              @if (modo() !== 'visualizar') {
+                <button
+                  type="button"
+                  class="lupa"
+                  aria-label="Buscar conta corrente"
+                  title="Buscar conta corrente"
+                  [disabled]="buscando()"
+                  (click)="buscarConta()"
                 >
-                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
-                  <path d="m16 16 5 5"></path>
-                </svg>
-              </button>
+                  <svg width="16" height="16" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" aria-hidden="true">
+                    <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                    <path d="m16 16 5 5"></path>
+                  </svg>
+                </button>
+              }
 
               @if (contaLocalizada(); as conta) {
                 <strong class="titular">{{ conta.titular }}</strong>
@@ -129,13 +158,8 @@
 
           <div>
             <label for="valor-lancamento">Valor *</label>
-            <input
-              id="valor-lancamento"
-              type="text"
-              inputmode="decimal"
-              placeholder="0,00"
-              formControlName="valor"
-            />
+            <input id="valor-lancamento" type="text" inputmode="decimal"
+              placeholder="0,00" formControlName="valor" />
 
             @if (campos.valor.touched && campos.valor.invalid) {
               <p class="erro">Informe um valor maior que zero, como 125,50.</p>
@@ -180,7 +204,7 @@
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset [disabled]="modo() === 'visualizar'">
         <legend>Documento CSC</legend>
 
         <label for="pa-lancamento">PA *</label>
@@ -196,7 +220,12 @@
     </div>
 
     <footer class="rodape-modal">
-      <button class="botao-primario" type="submit">Incluir</button>
+      @if (modo() !== 'visualizar') {
+        <button class="botao-primario" type="submit">
+          {{ modo() === 'alterar' ? 'Salvar alteração' : 'Incluir' }}
+        </button>
+      }
+
       <button class="secundario" type="button" (click)="dialogo.close()">Fechar</button>
     </footer>
   </form>
