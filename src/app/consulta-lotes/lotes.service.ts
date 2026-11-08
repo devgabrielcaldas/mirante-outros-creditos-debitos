@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { delay, Observable, of } from 'rxjs';
 
+import { Lancamento } from './inclusao-lote/lancamento.model';
 import { FiltrosPesquisaLotes, Intervalo, Lote } from './lote.model';
+
+type LoteEmMemoria = Lote & {
+  lancamentos?: readonly Lancamento[];
+};
 
 const LOTES_INICIAIS: Lote[] = [
   {
@@ -59,9 +64,18 @@ function dentroDoIntervalo(valor: number, intervalo: Intervalo<number | null>): 
     && (intervalo.ate === null || valor <= intervalo.ate);
 }
 
+function dataLocal(data: Date): string {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LotesService {
-  private lotes = LOTES_INICIAIS.map(lote => ({ ...lote }));
+  private lotes: LoteEmMemoria[] = LOTES_INICIAIS.map(lote => ({ ...lote }));
+  private proximoId = Math.max(...LOTES_INICIAIS.map(lote => lote.id)) + 1;
 
   pesquisar(filtros: FiltrosPesquisaLotes): Observable<Lote[]> {
     const responsavel = filtros.instituicaoResponsavel.trim().toLocaleLowerCase('pt-BR');
@@ -79,6 +93,45 @@ export class LotesService {
     );
 
     return of(resultado).pipe(delay(300));
+  }
+
+  criarLote(lancamentos: readonly Lancamento[]): Lote {
+    if (lancamentos.length === 0) {
+      throw new Error('Inclua pelo menos um lançamento antes de salvar o lote.');
+    }
+
+    const totalCentavos = lancamentos.reduce(
+      (total, lancamento) => total + lancamento.valorCentavos,
+      0,
+    );
+
+    if (!Number.isSafeInteger(totalCentavos)) {
+      throw new Error('O valor total ultrapassa o limite permitido para o lote.');
+    }
+
+    const agora = new Date();
+
+    const novoLote: LoteEmMemoria = {
+      id: this.proximoId,
+      instituicaoResponsavel: '0001 - SICOOB',
+      instituicao: '0002 - SICOOB Central',
+      dataEntrada: dataLocal(agora),
+      valor: totalCentavos / 100,
+      quantidadeLancamentos: lancamentos.length,
+      usuarioRegistro: 'gabriel.caldas',
+      usuarioAprovacao: null,
+      situacao: 'Aberto',
+      dataHoraSituacao: agora.toISOString(),
+      lancamentos: lancamentos.map(item => ({
+        ...item,
+        conta: { ...item.conta },
+      })),
+    };
+
+    this.lotes = [novoLote, ...this.lotes];
+    this.proximoId += 1;
+
+    return novoLote;
   }
 
   alterarInstituicao(id: number, instituicao: string): void {

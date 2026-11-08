@@ -9,6 +9,15 @@ import { FiltrosPesquisaLotes, Lote } from './consulta-lotes/lote.model';
 import { LotesService } from './consulta-lotes/lotes.service';
 import { TabelaLotes } from './consulta-lotes/tabela-lotes/tabela-lotes';
 
+const FILTROS_INICIAIS: FiltrosPesquisaLotes = {
+  instituicaoResponsavel: '',
+  instituicao: '',
+  situacao: '',
+  idLote: { de: null, ate: null },
+  valorLote: { de: null, ate: null },
+  dataEntrada: { de: '', ate: '' },
+};
+
 @Component({
   selector: 'app-root',
   imports: [FiltrosLotes, InclusaoLote, AcoesLote, TabelaLotes],
@@ -18,7 +27,7 @@ import { TabelaLotes } from './consulta-lotes/tabela-lotes/tabela-lotes';
 export class App {
   private readonly lotesService = inject(LotesService);
   private readonly pesquisas = new Subject<FiltrosPesquisaLotes>();
-  private ultimosFiltros: FiltrosPesquisaLotes | null = null;
+  private ultimosFiltros = FILTROS_INICIAIS;
 
   protected readonly tituloModulo = 'Outros Créditos/Débitos';
   protected readonly carregando = signal(false);
@@ -38,7 +47,12 @@ export class App {
   protected pesquisar(filtros: FiltrosPesquisaLotes): void {
     this.aviso.set('');
     this.ultimosFiltros = filtros;
-    this.executarPesquisa(filtros);
+    this.atualizarResultado();
+  }
+
+  protected aoSalvarLote(id: number): void {
+    this.aviso.set(`Lote ${id} salvo com sucesso.`);
+    this.atualizarResultado();
   }
 
   protected alterarLote(evento: AlteracaoInstituicao): void {
@@ -54,13 +68,7 @@ export class App {
   }
 
   private atualizarResultado(): void {
-    if (this.ultimosFiltros) {
-      this.executarPesquisa(this.ultimosFiltros);
-    }
-  }
-
-  private executarPesquisa(filtros: FiltrosPesquisaLotes): void {
     this.carregando.set(true);
-    this.pesquisas.next(filtros);
+    this.pesquisas.next(this.ultimosFiltros);
   }
 }

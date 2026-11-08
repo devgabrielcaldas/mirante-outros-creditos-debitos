@@ -15,7 +15,7 @@
 <main class="consulta">
   <app-filtros-lotes (pesquisaSolicitada)="pesquisar($event)" />
 
-  <app-inclusao-lote />
+  <app-inclusao-lote (loteSalvo)="aoSalvarLote($event)" />
 
   @if (aviso()) {
     <p role="status">{{ aviso() }}</p>

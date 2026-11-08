@@ -9,7 +9,7 @@
     <div class="topo-grade">
       <h2 id="titulo-rascunho">Lançamentos do lote em inclusão</h2>
 
-      <button class="botao-primario" type="button" (click)="abrir(dialogo)">
+      <button class="secundario" type="button" (click)="abrir(dialogo)">
         Incluir
       </button>
     </div>
@@ -47,6 +47,16 @@
         </tbody>
       </table>
     </div>
+
+    @if (erroLote()) {
+      <p class="erro" role="alert">{{ erroLote() }}</p>
+    }
+
+    <footer class="rodape-modal">
+      <button class="botao-primario" type="button" (click)="salvarLote()">
+        Salvar lote
+      </button>
+    </footer>
   </section>
 }
 
@@ -85,7 +95,21 @@
                 title="Buscar conta corrente"
                 [disabled]="buscando()"
                 (click)="buscarConta()"
-              >⚲</button>
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                  <path d="m16 16 5 5"></path>
+                </svg>
+              </button>
 
               @if (contaLocalizada(); as conta) {
                 <strong class="titular">{{ conta.titular }}</strong>

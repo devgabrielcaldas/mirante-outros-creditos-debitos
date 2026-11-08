@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import '@angular/common/locales/global/pt';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -11,6 +11,7 @@ import {
 } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 
+import { LotesService } from '../lotes.service';
 import { ContasService } from './contas.service';
 import { ContaCorrente, Lancamento, lerValorEmCentavos } from './lancamento.model';
 
@@ -31,13 +32,17 @@ const valorMonetario: ValidatorFn = controle => {
   styleUrl: './inclusao-lote.css',
 })
 export class InclusaoLote {
+  readonly loteSalvo = output<number>();
+
   private readonly contasService = inject(ContasService);
+  private readonly lotesService = inject(LotesService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly lancamentos = signal<readonly Lancamento[]>([]);
   protected readonly contaLocalizada = signal<ContaCorrente | null>(null);
   protected readonly buscando = signal(false);
   protected readonly erroConta = signal('');
+  protected readonly erroLote = signal('');
 
   protected readonly formulario = new FormGroup({
     conta: new FormControl('', {
@@ -144,5 +149,25 @@ export class InclusaoLote {
 
     this.lancamentos.update(atuais => [...atuais, lancamento]);
     dialogo.close();
+  }
+
+  protected salvarLote(): void {
+    const itens = this.lancamentos();
+
+    if (itens.length === 0) {
+      return;
+    }
+
+    this.erroLote.set('');
+
+    try {
+      const lote = this.lotesService.criarLote(itens);
+      this.lancamentos.set([]);
+      this.loteSalvo.emit(lote.id);
+    } catch (erro) {
+      this.erroLote.set(
+        erro instanceof Error ? erro.message : 'Não foi possível salvar o lote.',
+      );
+    }
   }
 }
