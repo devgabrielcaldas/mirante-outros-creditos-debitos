@@ -28,6 +28,7 @@
       [lote]="lotes.length && tabela ? tabela.loteSelecionado() : null"
       (alteracaoConfirmada)="alterarLote($event)"
       (exclusaoConfirmada)="excluirLote($event)"
+      (situacaoSolicitada)="atualizarSituacao($event)"
     />
 
     <app-tabela-lotes #tabela [lotes]="lotes" />

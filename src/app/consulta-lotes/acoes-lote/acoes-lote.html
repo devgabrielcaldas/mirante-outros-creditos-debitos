@@ -1,10 +1,24 @@
 <div class="barra" role="group" aria-label="Ações do lote">
+  <button type="button" [disabled]="!podeConfirmar(lote())" (click)="abrir('confirmar')">
+    Confirmar
+  </button>
+
+  <button type="button" [disabled]="!podeEnviar(lote())" (click)="enviar()">
+    Enviar
+  </button>
+
+  <button type="button" [disabled]="!lote()?.justificativa" (click)="abrir('justificativa')">
+    Visualizar Justificativa
+  </button>
+
   <button type="button" [disabled]="!lote()" (click)="abrir('alterar')">
     Alterar
   </button>
+
   <button type="button" [disabled]="!lote()" (click)="abrir('excluir')">
     Excluir
   </button>
+
   <button type="button" [disabled]="!lote()" (click)="abrir('visualizar')">
     Visualizar
   </button>
@@ -12,6 +26,30 @@
 
 @if (lote(); as atual) {
   @switch (acao()) {
+    @case ('confirmar') {
+      <section class="detalhe" aria-label="Confirmação do lote">
+        <h2>Confirmar lote {{ atual.id }}?</h2>
+
+        <form (submit)="$event.preventDefault(); confirmar()">
+          <label for="justificativa-confirmacao">Justificativa (opcional)</label>
+          <input id="justificativa-confirmacao" type="text" [formControl]="justificativa" />
+
+          <div class="comandos">
+            <button type="submit" class="primario">Confirmar lote</button>
+            <button type="button" (click)="fechar()">Cancelar</button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @case ('justificativa') {
+      <section class="detalhe" aria-label="Justificativa do lote">
+        <h2>Justificativa do lote {{ atual.id }}</h2>
+        <p>{{ atual.justificativa }}</p>
+        <button type="button" (click)="fechar()">Fechar</button>
+      </section>
+    }
+
     @case ('visualizar') {
       <section class="detalhe" aria-label="Dados do lote">
         <h2>Lote {{ atual.id }}</h2>

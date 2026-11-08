@@ -2,11 +2,20 @@ import { Injectable } from '@angular/core';
 import { delay, Observable, of } from 'rxjs';
 
 import { Lancamento } from './inclusao-lote/lancamento.model';
-import { FiltrosPesquisaLotes, Intervalo, Lote } from './lote.model';
+import {
+  FiltrosPesquisaLotes,
+  Intervalo,
+  Lote,
+  OperacaoSituacao,
+  podeConfirmar,
+  podeEnviar,
+} from './lote.model';
 
 type LoteEmMemoria = Lote & {
   lancamentos?: readonly Lancamento[];
 };
+
+const USUARIO_ATUAL = 'gabriel.caldas';
 
 const LOTES_INICIAIS: Lote[] = [
   {
@@ -56,6 +65,7 @@ const LOTES_INICIAIS: Lote[] = [
     usuarioAprovacao: 'rui.lima',
     situacao: 'Confirmado',
     dataHoraSituacao: '2026-11-06T16:20:00',
+    justificativa: 'Documentação conferida para o fechamento do lote.',
   },
 ];
 
@@ -118,7 +128,7 @@ export class LotesService {
       dataEntrada: dataLocal(agora),
       valor: totalCentavos / 100,
       quantidadeLancamentos: lancamentos.length,
-      usuarioRegistro: 'gabriel.caldas',
+      usuarioRegistro: USUARIO_ATUAL,
       usuarioAprovacao: null,
       situacao: 'Aberto',
       dataHoraSituacao: agora.toISOString(),
@@ -130,8 +140,40 @@ export class LotesService {
 
     this.lotes = [novoLote, ...this.lotes];
     this.proximoId += 1;
-
     return novoLote;
+  }
+
+  atualizarSituacao(operacao: OperacaoSituacao): void {
+    const atual = this.lotes.find(lote => lote.id === operacao.id);
+
+    if (!atual) {
+      throw new Error(`Lote ${operacao.id} não encontrado.`);
+    }
+
+    const dataHoraSituacao = new Date().toISOString();
+    let atualizado: LoteEmMemoria;
+
+    if (operacao.tipo === 'enviar') {
+      if (!podeEnviar(atual)) {
+        throw new Error('Somente lotes abertos podem ser enviados.');
+      }
+
+      atualizado = { ...atual, situacao: 'Enviado', dataHoraSituacao };
+    } else {
+      if (!podeConfirmar(atual)) {
+        throw new Error('Somente lotes enviados podem ser confirmados.');
+      }
+
+      atualizado = {
+        ...atual,
+        situacao: 'Confirmado',
+        usuarioAprovacao: USUARIO_ATUAL,
+        justificativa: operacao.justificativa.trim(),
+        dataHoraSituacao,
+      };
+    }
+
+    this.lotes = this.lotes.map(lote => lote.id === atual.id ? atualizado : lote);
   }
 
   alterarInstituicao(id: number, instituicao: string): void {

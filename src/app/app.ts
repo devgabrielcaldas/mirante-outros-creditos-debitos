@@ -5,7 +5,7 @@ import { Subject, switchMap } from 'rxjs';
 import { AcoesLote, AlteracaoInstituicao } from './consulta-lotes/acoes-lote/acoes-lote';
 import { FiltrosLotes } from './consulta-lotes/filtros-lotes/filtros-lotes';
 import { InclusaoLote } from './consulta-lotes/inclusao-lote/inclusao-lote';
-import { FiltrosPesquisaLotes, Lote } from './consulta-lotes/lote.model';
+import { FiltrosPesquisaLotes, Lote, OperacaoSituacao } from './consulta-lotes/lote.model';
 import { LotesService } from './consulta-lotes/lotes.service';
 import { TabelaLotes } from './consulta-lotes/tabela-lotes/tabela-lotes';
 
@@ -64,6 +64,20 @@ export class App {
   protected excluirLote(id: number): void {
     this.lotesService.excluir(id);
     this.aviso.set(`Lote ${id} excluído.`);
+    this.atualizarResultado();
+  }
+
+  protected atualizarSituacao(operacao: OperacaoSituacao): void {
+    try {
+      this.lotesService.atualizarSituacao(operacao);
+      const situacao = operacao.tipo === 'enviar' ? 'enviado' : 'confirmado';
+      this.aviso.set(`Lote ${operacao.id} ${situacao} com sucesso.`);
+    } catch (erro) {
+      this.aviso.set(
+        erro instanceof Error ? erro.message : 'Não foi possível atualizar a situação do lote.',
+      );
+    }
+
     this.atualizarResultado();
   }
 
