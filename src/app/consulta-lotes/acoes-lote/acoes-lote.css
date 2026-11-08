@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  margin-top: 16px;
+}
+
+.barra,
+.comandos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.barra {
+  padding: 8px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background: #eaf0f1;
+}
+
+button {
+  min-height: 34px;
+  padding: 5px 15px;
+  border: 1px solid #adc3c5;
+  border-radius: 4px;
+  background: white;
+  color: var(--cor-petroleo);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover:enabled {
+  border-color: var(--cor-destaque);
+}
+
+button:disabled {
+  border-color: #d2dcdd;
+  background: #f1f4f4;
+  color: #65767a;
+  cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+.detalhe {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background: white;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+dt,
+label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+dd {
+  margin: 4px 0 0;
+}
+
+label,
+input {
+  display: block;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 32rem;
+  margin: 5px 0 12px;
+  padding: 8px 10px;
+  border: 1px solid #b9cbcd;
+  border-radius: 4px;
+  color: var(--cor-petroleo);
+  font: inherit;
+}
+
+.primario {
+  background: var(--cor-destaque);
+  color: white;
+}
+
+.destrutivo {
+  border-color: #942d31;
+  background: #942d31;
+  color: white;
+}
+
+.erro {
+  color: #942d31;
+}

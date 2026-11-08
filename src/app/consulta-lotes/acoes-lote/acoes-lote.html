@@ -1,0 +1,81 @@
+<div class="barra" role="group" aria-label="Ações do lote">
+  <button type="button" [disabled]="!lote()" (click)="abrir('alterar')">
+    Alterar
+  </button>
+  <button type="button" [disabled]="!lote()" (click)="abrir('excluir')">
+    Excluir
+  </button>
+  <button type="button" [disabled]="!lote()" (click)="abrir('visualizar')">
+    Visualizar
+  </button>
+</div>
+
+@if (lote(); as atual) {
+  @switch (acao()) {
+    @case ('visualizar') {
+      <section class="detalhe" aria-label="Dados do lote">
+        <h2>Lote {{ atual.id }}</h2>
+
+        <dl>
+          <div>
+            <dt>Instituição Resp.</dt>
+            <dd>{{ atual.instituicaoResponsavel }}</dd>
+          </div>
+          <div>
+            <dt>Instituição</dt>
+            <dd>{{ atual.instituicao }}</dd>
+          </div>
+          <div>
+            <dt>Situação Lote</dt>
+            <dd>{{ atual.situacao }}</dd>
+          </div>
+          <div>
+            <dt>Usuário Registro</dt>
+            <dd>{{ atual.usuarioRegistro }}</dd>
+          </div>
+        </dl>
+
+        <button type="button" (click)="fechar()">Fechar</button>
+      </section>
+    }
+
+    @case ('alterar') {
+      <section class="detalhe" aria-label="Alteração do lote">
+        <h2>Alterar lote {{ atual.id }}</h2>
+
+        <form (submit)="$event.preventDefault(); salvar()">
+          <label for="instituicao-edicao">Instituição</label>
+          <input
+            id="instituicao-edicao"
+            type="text"
+            [formControl]="instituicao"
+            [attr.aria-invalid]="instituicao.touched && instituicao.invalid"
+          />
+
+          @if (instituicao.touched && instituicao.invalid) {
+            <p class="erro" role="alert">Informe a instituição do lote.</p>
+          }
+
+          <div class="comandos">
+            <button type="submit" class="primario">Salvar</button>
+            <button type="button" (click)="fechar()">Cancelar</button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @case ('excluir') {
+      <section class="detalhe" aria-label="Confirmação de exclusão">
+        <h2>Excluir lote {{ atual.id }}?</h2>
+        <p>O lote será removido da consulta em memória.</p>
+
+        <div class="comandos">
+          <button type="button" class="destrutivo" (click)="excluir()">
+            Confirmar exclusão
+          </button>
+          <button type="button" (click)="fechar()">Cancelar</button>
+        </div>
+      </section>
+    }
+  }
+}

@@ -15,9 +15,19 @@
 <main class="consulta">
   <app-filtros-lotes (pesquisaSolicitada)="pesquisar($event)" />
 
+  @if (aviso()) {
+    <p role="status">{{ aviso() }}</p>
+  }
+
   @if (carregando()) {
     <p role="status">Pesquisando lotes…</p>
   } @else if (resultado(); as lotes) {
-    <app-tabela-lotes [lotes]="lotes" />
+    <app-acoes-lote
+      [lote]="lotes.length && tabela ? tabela.loteSelecionado() : null"
+      (alteracaoConfirmada)="alterarLote($event)"
+      (exclusaoConfirmada)="excluirLote($event)"
+    />
+
+    <app-tabela-lotes #tabela [lotes]="lotes" />
   }
 </main>

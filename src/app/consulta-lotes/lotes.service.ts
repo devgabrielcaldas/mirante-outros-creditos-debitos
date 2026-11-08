@@ -61,12 +61,14 @@ function dentroDoIntervalo(valor: number, intervalo: Intervalo<number | null>): 
 
 @Injectable({ providedIn: 'root' })
 export class LotesService {
+  private lotes = LOTES_INICIAIS.map(lote => ({ ...lote }));
+
   pesquisar(filtros: FiltrosPesquisaLotes): Observable<Lote[]> {
     const responsavel = filtros.instituicaoResponsavel.trim().toLocaleLowerCase('pt-BR');
     const instituicao = filtros.instituicao.trim().toLocaleLowerCase('pt-BR');
     const datas = filtros.dataEntrada;
 
-    const resultado = LOTES_INICIAIS.filter(lote =>
+    const resultado = this.lotes.filter(lote =>
       lote.instituicaoResponsavel.toLocaleLowerCase('pt-BR').includes(responsavel)
       && lote.instituicao.toLocaleLowerCase('pt-BR').includes(instituicao)
       && (filtros.situacao === '' || lote.situacao === filtros.situacao)
@@ -77,5 +79,15 @@ export class LotesService {
     );
 
     return of(resultado).pipe(delay(300));
+  }
+
+  alterarInstituicao(id: number, instituicao: string): void {
+    this.lotes = this.lotes.map(lote =>
+      lote.id === id ? { ...lote, instituicao } : lote
+    );
+  }
+
+  excluir(id: number): void {
+    this.lotes = this.lotes.filter(lote => lote.id !== id);
   }
 }

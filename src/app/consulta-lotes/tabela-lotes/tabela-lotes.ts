@@ -13,7 +13,7 @@ registerLocaleData(localePt, 'pt-BR');
   styleUrl: './tabela-lotes.css',
 })
 export class TabelaLotes {
-  readonly lotes = input.required<readonly Lote[]>();
+  readonly lotes = input<readonly Lote[]>([]);
 
   private readonly tamanhoPagina = 2;
 
@@ -34,6 +34,13 @@ export class TabelaLotes {
   protected readonly selecionados = linkedSignal({
     source: this.lotesDaPagina,
     computation: () => new Set<number>(),
+  });
+
+  readonly loteSelecionado = computed(() => {
+    const ids = this.selecionados();
+    return ids.size === 1
+      ? this.lotesDaPagina().find(lote => ids.has(lote.id)) ?? null
+      : null;
   });
 
   protected readonly todosSelecionados = computed(() => {
