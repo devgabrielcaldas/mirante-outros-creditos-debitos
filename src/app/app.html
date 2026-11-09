@@ -15,7 +15,18 @@
 <main class="consulta">
   <app-filtros-lotes (pesquisaSolicitada)="pesquisar($event)" />
 
-  <app-inclusao-lote (loteSalvo)="aoSalvarLote($event)" />
+  <app-acoes-lote
+    [lote]="tabela()?.loteSelecionado() ?? null"
+    (alteracaoConfirmada)="alterarLote($event)"
+    (exclusaoConfirmada)="excluirLote($event)"
+    (situacaoSolicitada)="atualizarSituacao($event)"
+  >
+    <button class="botao-primario" type="button"
+      [disabled]="inclusao.temRascunho()"
+      (click)="inclusao.iniciarLote()">Incluir</button>
+  </app-acoes-lote>
+
+  <app-inclusao-lote #inclusao (loteSalvo)="aoSalvarLote($event)" />
 
   @if (aviso()) {
     <p role="status">{{ aviso() }}</p>
@@ -24,13 +35,6 @@
   @if (carregando()) {
     <p role="status">Pesquisando lotes…</p>
   } @else if (resultado(); as lotes) {
-    <app-acoes-lote
-      [lote]="lotes.length && tabela ? tabela.loteSelecionado() : null"
-      (alteracaoConfirmada)="alterarLote($event)"
-      (exclusaoConfirmada)="excluirLote($event)"
-      (situacaoSolicitada)="atualizarSituacao($event)"
-    />
-
-    <app-tabela-lotes #tabela [lotes]="lotes" />
+    <app-tabela-lotes [lotes]="lotes" />
   }
 </main>

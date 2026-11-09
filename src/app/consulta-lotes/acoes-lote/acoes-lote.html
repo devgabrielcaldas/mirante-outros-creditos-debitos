@@ -11,6 +11,8 @@
     Visualizar Justificativa
   </button>
 
+  <ng-content select="button" />
+
   <button type="button" [disabled]="!lote()" (click)="abrir('alterar')">
     Alterar
   </button>

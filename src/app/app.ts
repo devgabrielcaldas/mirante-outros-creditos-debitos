@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, switchMap } from 'rxjs';
 
@@ -29,6 +29,7 @@ export class App {
   private readonly pesquisas = new Subject<FiltrosPesquisaLotes>();
   private ultimosFiltros = FILTROS_INICIAIS;
 
+  protected readonly tabela = viewChild(TabelaLotes);
   protected readonly tituloModulo = 'Outros Créditos/Débitos';
   protected readonly carregando = signal(false);
   protected readonly resultado = signal<Lote[] | null>(null);

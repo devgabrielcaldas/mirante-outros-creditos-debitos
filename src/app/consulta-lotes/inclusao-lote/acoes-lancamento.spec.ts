@@ -39,7 +39,8 @@ describe('Ações dos lançamentos do rascunho', () => {
   }
 
   function incluirPrimeiraLinha(): void {
-    clicar('.entrada button', 'Incluir');
+    fixture.componentInstance.iniciarLote();
+    fixture.detectChanges();
     preencher('conta-lancamento', '12345-6');
     clicar('[aria-label="Buscar conta corrente"]');
     preencher('valor-lancamento', '125,50');

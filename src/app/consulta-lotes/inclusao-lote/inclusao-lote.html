@@ -1,10 +1,4 @@
-@if (lancamentos().length === 0) {
-  <div class="entrada">
-    <button class="botao-primario" type="button" (click)="abrir(dialogo, 'incluir')">
-      Incluir
-    </button>
-  </div>
-} @else {
+@if (temRascunho()) {
   <section class="rascunho" aria-labelledby="titulo-rascunho">
     <div class="topo-grade">
       <h2 id="titulo-rascunho">Lançamentos do lote em inclusão</h2>

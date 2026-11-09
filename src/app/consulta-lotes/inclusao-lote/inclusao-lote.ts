@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import '@angular/common/locales/global/pt';
-import { Component, computed, DestroyRef, inject, output, signal } from '@angular/core';
+import { Component, computed, DestroyRef, ElementRef, inject, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -39,9 +39,11 @@ export class InclusaoLote {
   private readonly contasService = inject(ContasService);
   private readonly lotesService = inject(LotesService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialogo = viewChild.required<ElementRef<HTMLDialogElement>>('dialogo');
   private proximoId = 1;
 
   protected readonly lancamentos = signal<readonly Lancamento[]>([]);
+  readonly temRascunho = computed(() => this.lancamentos().length > 0);
   protected readonly idSelecionado = signal<number | null>(null);
   protected readonly selecionado = computed(() =>
     this.lancamentos().find(item => item.id === this.idSelecionado()) ?? null
@@ -89,6 +91,12 @@ export class InclusaoLote {
       this.erroConta.set('');
       this.buscando.set(false);
     });
+  }
+
+  iniciarLote(): void {
+    if (!this.temRascunho()) {
+      this.abrir(this.dialogo().nativeElement, 'incluir');
+    }
   }
 
   protected selecionar(id: number): void {
